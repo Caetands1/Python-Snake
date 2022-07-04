@@ -1,0 +1,134 @@
+import pygame
+import random
+
+pygame.init()
+WIDTH, HEIGHT= 600,500
+SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Snake Game")
+
+# VARIABLES
+backgroundcolour = (28,134,238)
+endscreencolour = (0,0,0)
+FPS = 144
+screenrect = SCREEN.get_rect()
+screencenter = screenrect.center
+setup = False
+x = 0
+y = 0
+xchange = 0
+ychange = 0
+speed = 1
+green = 0,255,0
+endrun = False
+# CLASS
+
+class objects:
+    def __init__(self, name, surface, colour):
+        self.name = name
+        self.surface = surface
+        self.colour = colour
+
+
+    def randomcoord(self):
+        self.applex = random.randrange(16,584)
+        self.appley = random.randrange(16,484)
+        return (self.applex, self.appley)
+    
+    def drawcircle(self, x,y,radius):
+        self.snakecenter = 295,245
+        self.name = pygame.draw.circle(self.surface, self.colour, (x,y),radius)
+   
+
+    def move(self,x1,y1):
+        
+        SCREEN.fill(backgroundcolour)
+        apple.drawcircle(coordinates[0],coordinates[1],10)
+        self.name = pygame.draw.circle(self.surface, self.colour, (self.snakecenter[0] +x1,self.snakecenter[1]+y1),15 )
+        pygame.display.update()
+
+# FUNCTIONS
+def init_setup():
+    
+    global snake
+    global endrun
+    global apple
+    global coordinates
+    print("initialising")
+    SCREEN.fill(backgroundcolour)
+    pygame.display.update()
+    apple = objects("APPLE", SCREEN, (255,0,0))
+    coordinates = apple.randomcoord()
+   
+    snake =  objects("SNAKE", SCREEN, (0,0,0))
+    snake.drawcircle(295,245,20)
+    pygame.display.update()
+    if endrun:
+        main(x, y, xchange, ychange, speed,setup = True,run=True)
+    
+
+def endscreen():
+
+    global endrun
+    print("Ending/restarting")
+    endrun = True
+    SCREEN.fill(endscreencolour)
+    font = pygame.font.Font('freesansbold.ttf', 32)
+    text = font.render(f'YOU SUCK LOL', True, green)
+    restarttext = font.render(f'Press Any Key To Restart ', True, green)
+    restartRect = restarttext.get_rect()
+    textRect = text.get_rect()
+    textRect.center = ((WIDTH // 2) - textRect.x, (HEIGHT // 2)-textRect.y)
+    restartRect.center = ((WIDTH // 2) - restartRect.x, ((HEIGHT // 2)-restartRect.y)+35)
+    SCREEN.blit(text, textRect)
+    SCREEN.blit(restarttext, restartRect)
+    pygame.display.update()
+
+    while endrun:
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                init_setup()
+                endrun = False
+            elif event.type == pygame.QUIT:
+                pygame.quit
+                endrun=False
+    
+def main(x, y, xchange, ychange, speed,setup,run):
+
+    clock = pygame.time.Clock()
+    while run:
+        if setup == False:
+            setup = True
+            init_setup()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RIGHT:
+                    xchange = speed
+                    ychange = 0
+                elif event.key == pygame.K_LEFT:
+                    xchange = -speed
+                    ychange = 0
+                elif event.key == pygame.K_UP:
+                    xchange = 0
+                    ychange = -speed
+                elif event.key == pygame.K_DOWN:
+                    xchange = 0
+                    ychange = speed
+
+        if screenrect.contains(snake.name) != True:
+            endscreen()
+            run = False
+
+        x += xchange
+        y += ychange
+        snake.move(x,y)            
+        clock.tick(FPS)
+    pygame.display.update()
+
+if __name__ == "__main__":
+    main(x, y, xchange, ychange, speed,setup,run=True)
+
+pygame.quit()
+
