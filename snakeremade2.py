@@ -12,7 +12,7 @@ screencenter = screenrect.center
 bgclr = (81, 112, 54)
 speed = 1
 x = 0
-y=0
+y = 0
 
 def randomcoord():
     coord = (random.randrange(40,560), random.randrange(40,460))
@@ -57,7 +57,7 @@ class snakeobj(objects):
         SCREEN.fill(bgclr)
         apple.drawobject()
         
-        self.location = (screencenter[0]+self.xchange, screencenter[1]+self.ychange)
+        self.location = (screencenter[0]+hange, screencenter[1]+self.ychange) ## get this to change 
         self.drawobject()
         pygame.display.update()
 
