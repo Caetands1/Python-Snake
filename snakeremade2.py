@@ -1,11 +1,13 @@
 import random
 import pygame
+import math as m 
 
 pygame.init()
 pygame.font.init()
 WIDTH, HEIGHT= 600,500
 SCREEN = pygame.display.set_mode((WIDTH,HEIGHT))
 pygame.display.set_caption('SNAKE PROJECT')
+
 
 #VARIABLES
 FPS = 144
@@ -21,11 +23,9 @@ xchange = 0
 ychange = 0
 my_font = pygame.font.SysFont('Comic Sans MS', 30)
 
-def randomcoord():
-    coord = (random.randrange(40,560), random.randrange(40,460))
-    return coord
-    
+
 class objects:
+
     def __init__(self,colour ,location ,size, name, surface=SCREEN):
         self.surface = surface
         self.colour = colour
@@ -36,9 +36,13 @@ class objects:
     def drawobject(self):
         
         self.name = pygame.draw.circle(self.surface,self.colour,self.location,self.size, width=0)
-        pygame.display.update()
-        
+    
+    def randomcoord(self):
+        coord = (random.randrange(40,560), random.randrange(40,460))
+        return coord
+ 
 class snakeobj(objects):
+
     def __init__(self,colour,location, size,name):
         super().__init__(colour, location, size,name)
         
@@ -48,23 +52,35 @@ class snakeobj(objects):
         self.location = (screencenter[0] + x, screencenter[1] + y)
         self.drawobject()
         
-
+    
+    def eat(self):
+        apple.location = self.randomcoord()
+        global score
+        score = score + 1
 class appleobj(objects):
+
     def __init__(self,colour, location,size,name):
         super().__init__(colour,location, size,name)
-        self.location = randomcoord()
+        self.location = self.randomcoord()
 
 def initialise(endrun):
+    
+    global score
+    score = 0
     SCREEN.fill(bgclr)
+    global snake
     snake = snakeobj((0,0,255),screencenter, 20 , "snakerect")
     snake.drawobject()
 
+    global apple
     apple = appleobj((255,0,0),None,15, "applerect")
     apple.drawobject()
 
     if endrun:
         main(initiated,x,y,xchange,ychange)
-    return snake, apple
+        pygame.display.update()
+        endrun = False
+    
 
 def endscreen(endrun):
     while endrun:
@@ -87,9 +103,7 @@ def main(initiated,x,y,xchange,ychange):
     run = True      
     while run:
         if initiated == False:
-            ran = initialise(None)
-            snake = ran[0]
-            apple = ran[1]            
+            ran = initialise(None)           
             initiated = True 
         for event in pygame.event.get():       
             if event.type == pygame.QUIT:
@@ -110,14 +124,21 @@ def main(initiated,x,y,xchange,ychange):
 
         if screenrect.contains(snake.name) != True:
             endscreen(endrun = True)
+            global score
+            score=0
             run = False
-
+        
+        if m.sqrt((apple.location[0]-snake.location[0])**2+(apple.location[1]-snake.location[1])**2)<=35:
+            snake.eat()
         x += xchange
         y += ychange 
         snake.move(x,y,apple)
+        txt = (f'Score: {score}')
+        scoretext =  my_font.render(txt, False, (255, 255, 255))
+        SCREEN.blit(scoretext, (50,50))
         clock.tick(FPS)
-    pygame.display.update()
+        pygame.display.update()
 if __name__ == "__main__":
-    main(initiated,x,y,xchange,ychange)
+    main(initiated,x,y,xchange,ychange) 
 
 pygame.quit()
