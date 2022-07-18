@@ -25,7 +25,6 @@ class snake:
         game.apple.location = game.apple.randomcoord()
         game.apple.draw()
         game.score += 1
-        
 
 
 class apple:
@@ -67,7 +66,7 @@ class game:
         self.ychange = 0
         self.my_font = pygame.font.SysFont('Comic Sans MS', 30)
         self.score = 0 
-
+        
     def main(self,run):
 
         self.run = run
